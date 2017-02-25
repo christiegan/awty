@@ -1,5 +1,6 @@
 package edu.washington.clgan.awty;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.SEND_SMS},1);
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         String m = sharedPref.getString("message", "");
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
             Intent i = new Intent(this, AlarmReceiver.class);
             i.putExtra("message", message);
-            i.putExtra("phone#", phone);
+            i.putExtra("phone", phone);
             PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
             am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + (1000 * 60 * minutes), (1000 * 60 * minutes), pi);
